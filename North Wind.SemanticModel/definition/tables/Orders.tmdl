@@ -1,0 +1,167 @@
+table Orders
+	lineageTag: 624450b4-1791-4f8f-b2c0-5d52eec25c55
+
+	column 'Order ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6b4d60f7-2e5e-4b0f-8275-397be8dde45d
+		summarizeBy: none
+		sourceColumn: Order ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer ID'
+		dataType: string
+		lineageTag: b844fa13-ef3d-40c2-96c9-ce604d51ca75
+		summarizeBy: none
+		sourceColumn: Customer ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a32592be-db35-494f-a74f-fe3b3ae6d4a3
+		summarizeBy: none
+		sourceColumn: employee_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Order Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: df82210f-c447-4820-ac98-4d9211edb1f8
+		summarizeBy: none
+		sourceColumn: Order Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Proposed delivery Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 34901adf-7b47-456f-8bcb-f08437ed4e71
+		summarizeBy: none
+		sourceColumn: Proposed delivery Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Shipped Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0b77263a-d081-41eb-9190-08b28990b5e3
+		summarizeBy: none
+		sourceColumn: Shipped Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ship_via
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c3563dd-f28f-4aa9-886d-5536519f114c
+		summarizeBy: none
+		sourceColumn: ship_via
+
+		annotation SummarizationSetBy = Automatic
+
+	column Freight
+		dataType: double
+		lineageTag: 958727c9-7d98-4a17-b24f-c4532b9058a0
+		summarizeBy: sum
+		sourceColumn: Freight
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Shipped To'
+		dataType: string
+		lineageTag: 5b34d552-d43a-43d5-a77c-1faf21d3ade4
+		summarizeBy: none
+		sourceColumn: Shipped To
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Delivery Address'
+		dataType: string
+		lineageTag: 9fe5a24e-3d86-4117-a049-e98a5733091b
+		summarizeBy: none
+		sourceColumn: Delivery Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Delivery City'
+		dataType: string
+		lineageTag: 9893a198-39e0-4ec1-abe3-88dc2414d0d2
+		dataCategory: City
+		summarizeBy: none
+		sourceColumn: Delivery City
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Delivery region'
+		dataType: string
+		lineageTag: ebc078bd-6bd0-4c08-a82f-73dc98d8b769
+		summarizeBy: none
+		sourceColumn: Delivery region
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Delivery Postal Code'
+		dataType: string
+		lineageTag: 95c8eafc-fd76-4461-865b-243cf0212989
+		summarizeBy: none
+		sourceColumn: Delivery Postal Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Delivery Country'
+		dataType: string
+		lineageTag: e752d31e-d7e5-496f-8d27-92fecabbce5d
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: Delivery Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Days to Shippment'
+		dataType: int64
+		formatString: 0
+		lineageTag: 428d629e-204d-4537-b236-55e734818d78
+		summarizeBy: sum
+		sourceColumn: Days to Shippment
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Shipped Late'
+		dataType: int64
+		formatString: 0
+		lineageTag: 519d7348-bada-4c3d-9b80-30f8c292e600
+		summarizeBy: sum
+		sourceColumn: Shipped Late
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Orders-b837daaa-8a58-42fb-a48b-d6c559e6375f = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_orders = Source{[Schema="public",Item="orders"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_orders,{"public.customers", "public.employees", "public.order_details", "public.shippers"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"order_id", "Order ID"}, {"customer_id", "Customer ID"}, {"order_date", "Order Date"}, {"required_date", "Proposed delivery Date"}, {"shipped_date", "Shipped Date"}, {"freight", "Freight"}, {"ship_name", "Shipped To"}, {"ship_address", "Delivery Address"}, {"ship_city", "Delivery City"}, {"ship_region", "Delivery region"}, {"ship_postal_code", "Delivery Postal Code"}, {"ship_country", "Delivery Country"}}),
+				    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Days to Shippment", each Duration.Days([Shipped Date]-[Order Date])),
+				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Shipped Late", each if [Shipped Date] is null then null else if [Proposed delivery Date] < [Shipped Date] then 1 else 0),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom1",{{"Days to Shippment", Int64.Type}, {"Shipped Late", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

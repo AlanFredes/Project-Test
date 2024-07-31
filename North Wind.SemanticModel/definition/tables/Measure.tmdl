@@ -1,0 +1,219 @@
+table Measure
+	lineageTag: e150f13a-f819-4f64-8feb-9b566f7d2129
+
+	measure 'Total Sales' = SUMX('Order Details','Order Details'[Unit Price]*'Order Details'[Discount]*'Order Details'[Quantity])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales
+		lineageTag: c702f9ee-0141-42c1-979f-ec9c751e29d0
+
+	measure 'Display Order Date' = ```
+			
+			VAR max_date = FORMAT(MAX(Orders[Order Date]),"dd-mmmm-yy")
+			VAR start_of_year_curr = FORMAT(MIN('Date'[Date]),"dd-mmmm-yy")
+			RETURN
+			"From " & start_of_year_curr & " to " & max_date 
+			```
+		displayFolder: Date
+		lineageTag: 76991e8b-6b68-40b2-aabb-77e4c0ab4a4e
+
+	measure 'Total Orders' = DISTINCTCOUNTNOBLANK('Order Details'[Order ID])
+		formatString: 0
+		displayFolder: Orders
+		lineageTag: afcf7f8b-7594-4f8c-9d5b-1ee83426f469
+
+	measure 'Total Weight' = SUM(Orders[Freight])
+		displayFolder: Orders
+		lineageTag: 95182e83-ffd8-459c-a90d-a223e2c650a0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg. Weight Per Order' = Divide([Total Weight],[Total Orders])
+		displayFolder: Orders
+		lineageTag: 2e941b89-57ec-4ed7-9690-2191901e83a7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Sales PY' =
+			
+			CALCULATE(
+			    [Total Sales],
+			    PARALLELPERIOD('Date'[Date],-1,YEAR))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales
+		lineageTag: a87c5323-b7d4-4831-8764-73fbd3e87637
+
+	measure 'Total Sales YoY Chg' = [Total Sales] - [Total Sales PY]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales
+		lineageTag: 2a09b685-e8b5-4faa-b591-5a1248da68ea
+
+	measure 'Total Sales YoY Chg %' =
+			
+			DIVIDE([Total Sales YoY Chg],ABS([Total Sales PY]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Sales
+		lineageTag: 0d3f9a8c-0728-4c89-b707-e3c61aa40091
+
+	measure 'Total Sales Icon' =
+			
+			IF([Total Sales YoY Chg %]>0,UNICHAR ( 8657 ),
+			IF([Total Sales YoY Chg %]=0,UNICHAR ( 8660 ),
+			UNICHAR ( 8659 )))
+		displayFolder: Sales
+		lineageTag: 5b94084a-2eae-456d-9858-31c0420f7676
+
+	measure 'Total Products Sold' = SUM('Order Details'[Quantity])
+		formatString: 0
+		displayFolder: Sales
+		lineageTag: 2fe28a61-7f4e-44a1-b883-08b950d2c02e
+
+	measure 'Total Products In Inventory' = SUM(Products[units_in_stock])
+		formatString: #,0
+		displayFolder: Inventory
+		lineageTag: 9b6c7aca-570f-46bf-ab80-1618d971e218
+
+	measure 'Inventory Trunover' = DIVIDE([Total Products Sold],[Total Products In Inventory])
+		formatString: 0.00
+		displayFolder: Inventory
+		lineageTag: 7f5a4c6f-0860-4fac-a83a-4d4050b08007
+
+	measure 'Inventory Turnover (days)' = ```
+			
+			VAR Number_Of_Days = 
+			CALCULATE(
+			        DISTINCTCOUNT('Date'[Date]),
+			        'Date'[Date]<=MAX(Orders[Order Date]),
+			        'Date'[Date]>=MIN('Date'[Date])
+			)
+			RETURN
+			DIVIDE(
+			    Number_Of_Days,
+			    [Inventory Trunover]
+			)
+			```
+		formatString: #,0
+		displayFolder: Inventory
+		lineageTag: b4dec27b-dcd6-4ae7-9366-53e67fb79cc6
+
+	measure 'Number of Days' =
+			
+			CALCULATE(
+			        DISTINCTCOUNT('Date'[Date]),
+			        'Date'[Date]<=MAX(Orders[Order Date]),
+			        'Date'[Date]>=MIN('Date'[Date])
+			)
+		formatString: 0
+		displayFolder: Date
+		lineageTag: fc29e9f3-e985-4a11-9dc3-7156052cc851
+
+	measure 'Avg. Days To Ship' = AVERAGE(Orders[Days to Shippment])
+		formatString: 0
+		displayFolder: Shippment
+		lineageTag: 033054d8-65ce-4dd8-ba4c-676a135851d0
+
+	measure 'Avg. Value Per Order' = Divide([Total Sales],[Total Orders])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Orders
+		lineageTag: 6084e6fe-f137-4140-9453-f449a3f3144e
+
+	measure 'Total Sales YoY Chg Display' =
+			
+			"YoY ∆ " & Format([Total Sales YoY Chg %],"#,###.00%")
+		displayFolder: Sales
+		lineageTag: 4c1f9361-7bc2-4cd8-91fd-c14e615df749
+
+	measure 'Total Orders PY' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    PARALLELPERIOD('Date'[Date],-1,YEAR))
+		formatString: 0
+		displayFolder: Orders
+		lineageTag: c31714c1-f6fb-4b08-ba5e-7f374c32d5a4
+
+	measure 'Total Orders YoY Chg' = [Total Orders] - [Total Orders PY]
+		formatString: 0
+		displayFolder: Orders
+		lineageTag: ce231219-a639-4d6c-b564-e880d6943ff5
+
+	measure 'Total Orders YoY Chg Display' =
+			
+			VAR YoY_Chg_Perc =
+			DIVIDE(
+			    [Total Orders YoY Chg],
+			    ABS([Total Orders PY])
+			)
+			RETURN
+			"YoY ∆ " & Format(YoY_Chg_Perc,"#,###.0%")
+		displayFolder: Orders
+		lineageTag: f9ab5e9c-8084-4547-8342-edb60f8a6265
+
+	measure 'Total Inventory Value' = SUMX(Products,Products[unit_price]*Products[units_in_stock])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Inventory
+		lineageTag: 3f821acf-80d2-4ef3-a84b-94ed03619c71
+
+	measure 'Num. Products Need Reorder' = SUM(Products[Needs Reorder])
+		formatString: 0
+		displayFolder: Inventory
+		lineageTag: bd438a4f-5323-459e-91b6-62e1021dcb7d
+
+	measure 'Orders Shipped Late' = SUM(Orders[Shipped Late])
+		formatString: #,0
+		displayFolder: Shippment
+		lineageTag: 7bf57948-e4b2-4b65-97ca-d662eab8d933
+
+	measure 'Avg. Days To Ship PY' =
+			
+			CALCULATE(
+			    [Avg. Days To Ship],
+			    PARALLELPERIOD('Date'[Date],-1,YEAR))
+		formatString: 0
+		displayFolder: Shippment
+		lineageTag: 33711764-ce36-4054-a7ec-5852f07b1c29
+
+	measure 'Avg. Days To Ship YoY Chg' = [Avg. Days To Ship] - [Avg. Days To Ship PY]
+		formatString: 0
+		displayFolder: Shippment
+		lineageTag: 3ae67d04-d149-4076-aae7-dcc8c9bb24f1
+
+	measure 'Avg. Days To Ship YoY Chg %' =
+			
+			DIVIDE([Avg. Days To Ship YoY Chg],ABS([Avg. Days To Ship PY]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Shippment
+		lineageTag: 8b47b51b-6b2c-492c-856f-57418fd18f9c
+
+	measure 'Avg. Days To Ship Icon' =
+			
+			IF([Avg. Days To Ship YoY Chg %]>0,UNICHAR ( 8657 ),
+			IF([Avg. Days To Ship YoY Chg %]=0,UNICHAR ( 8660 ),
+			UNICHAR ( 8659 )))
+		displayFolder: Shippment
+		lineageTag: 8b5a5049-e643-4406-8415-004fc7580f5d
+
+	column Blank
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aa5d0f39-b83b-455b-b981-4f3d9f3b8280
+		summarizeBy: sum
+		sourceColumn: Blank
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Measure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Blank = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Blank", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,32 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-419
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Categories","Customers","Employee Territories","Employees","Order Details","Orders","Regions","Suppliers","Shippers","Products","US States","Date","Measure"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBIDesktopVersion = 2.130.930.0 (24.06)
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Categories
+ref table Customers
+ref table 'Employee Territories'
+ref table Employees
+ref table 'Order Details'
+ref table Orders
+ref table Regions
+ref table Suppliers
+ref table Shippers
+ref table Products
+ref table 'US States'
+ref table Date
+ref table Measure
+
+ref cultureInfo en-US
+

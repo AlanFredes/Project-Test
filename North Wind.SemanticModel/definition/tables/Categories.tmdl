@@ -1,0 +1,46 @@
+table Categories
+	lineageTag: cedf8dc5-b83d-4bed-bf7c-476a4e6f09e8
+
+	column 'Category ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 019f704d-12cf-439c-80ef-dc865e1aa8da
+		summarizeBy: none
+		sourceColumn: Category ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Category Name'
+		dataType: string
+		lineageTag: c7d41e76-2b09-40fa-870a-7902e6b89232
+		summarizeBy: none
+		sourceColumn: Category Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: dc1e33b8-adb2-43c8-b25b-fdecceecec14
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Categories-c50b9c2e-b150-43c9-a328-718befeace89 = m
+		mode: import
+		source =
+				let
+				    Source = Odbc.DataSource("dsn=PostgreSQL_NW", [HierarchicalNavigation=true]),
+				    Northwind_Database = Source{[Name="Northwind",Kind="Database"]}[Data],
+				    public_Schema = Northwind_Database{[Name="public",Kind="Schema"]}[Data],
+				    categories_Table = public_Schema{[Name="categories",Kind="Table"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(categories_Table,{{"category_id", "Category ID"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Category ID", Int64.Type}}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type",{{"category_name", "Category Name"}, {"description", "Description"}, {"picture", "Picture"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

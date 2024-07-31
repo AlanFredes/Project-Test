@@ -1,0 +1,71 @@
+table 'Order Details'
+	lineageTag: 57ef8bbc-54e2-4795-b5c5-2fc276402452
+
+	column 'Order ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: af34ed4e-68dd-48be-b524-fac1af01e516
+		summarizeBy: none
+		sourceColumn: Order ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a0e8bcfc-a015-4932-a734-18b2a993785f
+		summarizeBy: none
+		sourceColumn: Product ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Unit Price'
+		dataType: double
+		lineageTag: ce9d35e5-b283-4e49-adc6-8d6e6659e313
+		summarizeBy: sum
+		sourceColumn: Unit Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: f7624071-ddaf-40c0-9b52-256ce55ff2cb
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column Discount
+		dataType: double
+		lineageTag: 4479e783-77d7-47c1-99dc-28a0b4f91643
+		summarizeBy: sum
+		sourceColumn: Discount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Order Details-6a918368-81e8-4466-8862-e99add958240' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_order_details = Source{[Schema="public",Item="order_details"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_order_details,{"public.orders", "public.products"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"order_id", "Order ID"}, {"product_id", "Product ID"}, {"unit_price", "Unit Price"}, {"quantity", "Quantity"}, {"discount", "Discount"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

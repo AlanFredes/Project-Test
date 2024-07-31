@@ -1,0 +1,47 @@
+table 'US States'
+	lineageTag: e0631ab5-d3d6-4487-af6e-a91e32e5ab95
+
+	column state_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 137cd02a-ed51-4332-a719-77e5aa7cac5a
+		summarizeBy: sum
+		sourceColumn: state_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_name
+		dataType: string
+		lineageTag: 705d6586-3245-4267-8ac4-a984afa68198
+		summarizeBy: none
+		sourceColumn: state_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_abbr
+		dataType: string
+		lineageTag: d41fa7a8-7fe2-453d-8cfd-3f6f07f7d7d2
+		summarizeBy: none
+		sourceColumn: state_abbr
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_region
+		dataType: string
+		lineageTag: 8fa3f3ea-3d4c-4e6e-9d01-9e8281c8fc21
+		summarizeBy: none
+		sourceColumn: state_region
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'US States-d95f3379-1b09-402a-811e-c3bcb0cd5dff' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_us_states = Source{[Schema="public",Item="us_states"]}[Data]
+				in
+				    public_us_states
+
+	annotation PBI_ResultType = Table
+

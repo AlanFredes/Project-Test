@@ -1,0 +1,106 @@
+table Customers
+	lineageTag: a3e45621-4ddd-4b33-972f-d09ed9daff14
+
+	column 'Customer ID'
+		dataType: string
+		lineageTag: 68286521-09f7-4a23-b84f-f4e3783662c5
+		summarizeBy: none
+		sourceColumn: Customer ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Name'
+		dataType: string
+		lineageTag: 32cf85fa-fa84-4091-879d-5025e7b3ed68
+		summarizeBy: none
+		sourceColumn: Company Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contact Name'
+		dataType: string
+		lineageTag: d969fe52-cd3a-4bca-b42f-187e5ea93e04
+		summarizeBy: none
+		sourceColumn: Contact Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contact Title'
+		dataType: string
+		lineageTag: 692701a9-5729-4132-88ce-6b79ceac94bb
+		summarizeBy: none
+		sourceColumn: Contact Title
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		lineageTag: 399c6f0f-23c8-4ab8-bdbd-6ab114114959
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 2a618b53-4d74-4cd4-8728-1572a5c71ceb
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: daebfb77-40a6-4496-b111-7e615b2d2759
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Postal Code'
+		dataType: string
+		lineageTag: 318084b3-3e59-4fc8-b423-bf1272d132c6
+		summarizeBy: none
+		sourceColumn: Postal Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: e2e2e6c7-4c18-4828-8dcf-210c6db90c6a
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phone
+		dataType: string
+		lineageTag: 747a0a4a-9291-4c2d-b79a-0b186bc31b46
+		summarizeBy: none
+		sourceColumn: Phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fax
+		dataType: string
+		lineageTag: c79377f7-7ba6-48dd-b198-62b4152b5e15
+		summarizeBy: none
+		sourceColumn: Fax
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Customers-bfde4a38-1656-4bd6-afee-472b3269e0ff = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_customers = Source{[Schema="public",Item="customers"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(public_customers,{{"customer_id", "Customer ID"}, {"company_name", "Company Name"}, {"contact_name", "Contact Name"}, {"contact_title", "Contact Title"}, {"address", "Address"}, {"city", "City"}, {"region", "Region"}, {"postal_code", "Postal Code"}, {"country", "Country"}, {"phone", "Phone"}, {"fax", "Fax"}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"public.customer_customer_demo", "public.orders"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

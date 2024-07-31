@@ -1,0 +1,113 @@
+table Products
+	lineageTag: c7e6f3fb-e0ee-4887-99cb-f8f21057cfe1
+
+	column product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: c4440628-8cbb-4045-8c36-2b1063a7afc4
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_name
+		dataType: string
+		lineageTag: 0abc6b8b-6be1-4c57-89e6-c85ae9d30fa1
+		summarizeBy: none
+		sourceColumn: product_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column supplier_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 06410ea3-688e-4b24-bfd2-9cc02467bee4
+		summarizeBy: none
+		sourceColumn: supplier_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 19db157b-2ab6-42d1-b187-8b4bccd3374f
+		summarizeBy: none
+		sourceColumn: category_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity_per_unit
+		dataType: string
+		lineageTag: db2c1852-3132-41b1-9ad2-b6df0c229f30
+		summarizeBy: none
+		sourceColumn: quantity_per_unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit_price
+		dataType: double
+		lineageTag: b267b671-10b5-42fe-a2f5-7cb39bb0750f
+		summarizeBy: sum
+		sourceColumn: unit_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column units_in_stock
+		dataType: int64
+		formatString: 0
+		lineageTag: 08673b07-b1d4-4db0-a37f-f4a8ef54cfb4
+		summarizeBy: sum
+		sourceColumn: units_in_stock
+
+		annotation SummarizationSetBy = Automatic
+
+	column units_on_order
+		dataType: int64
+		formatString: 0
+		lineageTag: f99f389a-3fef-4ac0-b711-c2b111fa58cf
+		summarizeBy: sum
+		sourceColumn: units_on_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column reorder_level
+		dataType: int64
+		formatString: 0
+		lineageTag: 08fdf2ed-79e2-447d-880f-db791bf0fd33
+		summarizeBy: sum
+		sourceColumn: reorder_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column discontinued
+		dataType: int64
+		formatString: 0
+		lineageTag: aade463b-7425-498c-af09-8c695193e435
+		summarizeBy: sum
+		sourceColumn: discontinued
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Needs Reorder' = IF(Products[units_in_stock]<Products[reorder_level],1,0)
+		dataType: int64
+		formatString: 0
+		lineageTag: 9302c125-7606-413b-8e33-4a2d7ca20d0e
+		summarizeBy: sum
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Products-90fe9e50-aedf-4e25-91a6-1820fa8c496a = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_products = Source{[Schema="public",Item="products"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_products,{"public.categories", "public.order_details", "public.suppliers"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

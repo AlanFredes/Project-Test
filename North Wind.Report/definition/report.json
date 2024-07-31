@@ -1,0 +1,115 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/1.0.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY23SU04",
+      "reportVersionAtImport": "5.43",
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Power_BI_Theme_Generator_-_BIB26567348508512323.json",
+      "reportVersionAtImport": "5.50",
+      "type": "RegisteredResources"
+    }
+  },
+  "layoutOptimization": "None",
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "true"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY23SU04",
+          "path": "BaseThemes/CY23SU04.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "North_Wind_Background1268245726720505.png",
+          "path": "North_Wind_Background1268245726720505.png",
+          "type": "Image"
+        },
+        {
+          "name": "Power_BI_Theme_Generator_-_BIB26567348508512323.json",
+          "path": "Power_BI_Theme_Generator_-_BIB26567348508512323.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "checklists33208629279898716.png",
+          "path": "checklists33208629279898716.png",
+          "type": "Image"
+        },
+        {
+          "name": "just-in-time2101551312719081.png",
+          "path": "just-in-time2101551312719081.png",
+          "type": "Image"
+        },
+        {
+          "name": "sales5313850240734266.png",
+          "path": "sales5313850240734266.png",
+          "type": "Image"
+        },
+        {
+          "name": "weighing-machine24203783007918034.png",
+          "path": "weighing-machine24203783007918034.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  },
+  "slowDataSourceSettings": {
+    "isCrossHighlightingDisabled": false,
+    "isSlicerSelectionsButtonEnabled": false,
+    "isFilterSelectionsButtonEnabled": false,
+    "isFieldWellButtonEnabled": false,
+    "isApplyAllButtonEnabled": false
+  },
+  "publicCustomVisuals": [
+    "BulletChart1443347686880",
+    "RadarChart1446119667547",
+    "sankey02300D1BE6F5427989F3DE31CCA9E0F32020",
+    "sankey_diagram_visiochart_8c1a6a012eec472d899f79bf867da012",
+    "flowmap30CFDD5B92F848C88242B1E81C8C33C7",
+    "chartexposankeydiagramD70B8BC1836C4420A7BFCE36F48EE4BE"
+  ]
+}

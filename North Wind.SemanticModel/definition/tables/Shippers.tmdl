@@ -1,0 +1,40 @@
+table Shippers
+	lineageTag: d6237cff-2aa1-416e-92f7-64521c1b4919
+
+	column shipper_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 25bda9f9-5d29-4b0e-af85-a4b0da180373
+		summarizeBy: none
+		sourceColumn: shipper_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_name
+		dataType: string
+		lineageTag: c9a67b10-6699-4047-946c-67d1cf1fae94
+		summarizeBy: none
+		sourceColumn: company_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column phone
+		dataType: string
+		lineageTag: bfeac778-db62-4572-b793-604729e3215f
+		summarizeBy: none
+		sourceColumn: phone
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Shippers-8e4812f5-ad98-47c5-9912-7b3836c8fa74 = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_shippers = Source{[Schema="public",Item="shippers"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_shippers,{"public.orders"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

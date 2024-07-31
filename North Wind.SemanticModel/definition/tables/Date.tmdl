@@ -1,0 +1,82 @@
+table Date
+	lineageTag: c28d47a0-5604-4826-a927-76bbb5fbbde0
+	dataCategory: Time
+
+	measure Today = TODAY()-3
+		formatString: Long Date
+		lineageTag: d293a6fe-6477-4399-96a8-b77b3e9352a9
+
+	measure '1 year back (day)' = DATEADD('Date'[Date],-364,DAY)
+		formatString: General Date
+		lineageTag: eb3c440a-5ead-44a2-bcf4-96b1a2ef6092
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: Short Date
+		lineageTag: 3ceca359-79f8-4a64-a35f-d025ffb62941
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: b5b6090a-f72e-40c1-b2db-3123c0d24a35
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 63939f3b-49cf-4bc8-a1da-bef5efde423e
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: string
+		lineageTag: 6defa6c2-925a-4ea7-9c37-4e6ebff60816
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Holiday
+		dataType: string
+		lineageTag: 2784a6b2-272c-4129-b79e-74235a087de6
+		summarizeBy: none
+		sourceColumn: Holiday
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Abreviation' = FORMAT('Date'[Date],"mmm")
+		dataType: string
+		lineageTag: a5be2e7c-78e9-48d2-903a-76d4b19cc0a1
+		summarizeBy: none
+		isDataTypeInferred
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date-af10d177-7cd9-4fe3-b7d1-fc8a8f1721fa = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_dim_date = Source{[Schema="public",Item="dim_date"]}[Data]
+				in
+				    public_dim_date
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

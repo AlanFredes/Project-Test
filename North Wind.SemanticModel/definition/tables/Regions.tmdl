@@ -1,0 +1,40 @@
+table Regions
+	lineageTag: 4a996284-2d14-43e4-8075-8306db8a07f3
+
+	column region_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 877852af-17df-4ee0-9971-1d73b07e6248
+		summarizeBy: sum
+		sourceColumn: region_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column region_description
+		dataType: string
+		lineageTag: 6ec39251-65d4-4451-af77-1c7f28f272f9
+		summarizeBy: none
+		sourceColumn: region_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'public.territories.territory_id'
+		dataType: string
+		lineageTag: 3df98892-6dd4-475f-9ecb-8bcaf556b8f2
+		summarizeBy: none
+		sourceColumn: public.territories.territory_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Regions-1bc6926b-4b4e-4ddd-8a9d-322648a3a483 = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_region = Source{[Schema="public",Item="region"]}[Data],
+				    #"Expanded public.territories" = Table.ExpandTableColumn(public_region, "public.territories", {"territory_id"}, {"public.territories.territory_id"})
+				in
+				    #"Expanded public.territories"
+
+	annotation PBI_ResultType = Table
+

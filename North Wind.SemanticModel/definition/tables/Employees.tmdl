@@ -1,0 +1,193 @@
+table Employees
+	lineageTag: 94596f2f-08b8-4203-9de4-0c5abacc5668
+
+	column employee_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8010c86d-231c-40b7-95d8-d639153d876c
+		summarizeBy: sum
+		sourceColumn: employee_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_name
+		dataType: string
+		lineageTag: a376e284-9ece-4f8f-99ac-965157cac819
+		summarizeBy: none
+		sourceColumn: last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_name
+		dataType: string
+		lineageTag: 1babb8e1-e136-40a8-9df8-7f08a0bb85ac
+		summarizeBy: none
+		sourceColumn: first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column title
+		dataType: string
+		lineageTag: c58f13bb-dae3-4c33-bd68-b70bd01b4edf
+		summarizeBy: none
+		sourceColumn: title
+
+		annotation SummarizationSetBy = Automatic
+
+	column title_of_courtesy
+		dataType: string
+		lineageTag: c7a25f57-7e85-406e-914c-df81d2317af4
+		summarizeBy: none
+		sourceColumn: title_of_courtesy
+
+		annotation SummarizationSetBy = Automatic
+
+	column birth_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: adff09e5-e741-40f1-89ca-0beb6aab87f4
+		summarizeBy: none
+		sourceColumn: birth_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column hire_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 14f276cf-5331-4bf4-9570-2e2fd38664ba
+		summarizeBy: none
+		sourceColumn: hire_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column address
+		dataType: string
+		lineageTag: e7031056-e812-448c-90b4-8aaff15e435b
+		summarizeBy: none
+		sourceColumn: address
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: 7982da63-f098-4b68-9fb4-74d826415d9a
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 79099992-a1ac-41dc-9716-1f98cbd4b362
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column postal_code
+		dataType: string
+		lineageTag: ad496f22-e19d-48a2-be00-e947f39d2f9b
+		summarizeBy: none
+		sourceColumn: postal_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 855048db-3a35-4a5f-a116-484e7d7fe9b2
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column home_phone
+		dataType: string
+		lineageTag: be7fb5ec-6571-43c8-bdf7-3616a7cb9fbd
+		summarizeBy: none
+		sourceColumn: home_phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column extension
+		dataType: string
+		lineageTag: e7615bde-b9bc-4390-9179-b3e8be8fc237
+		summarizeBy: none
+		sourceColumn: extension
+
+		annotation SummarizationSetBy = Automatic
+
+	column notes
+		dataType: string
+		lineageTag: eac4eabb-dd6e-4fe8-8d10-3137e0919091
+		summarizeBy: none
+		sourceColumn: notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column reports_to
+		dataType: int64
+		formatString: 0
+		lineageTag: f5372bf7-1267-4925-a32a-988a0334f586
+		summarizeBy: sum
+		sourceColumn: reports_to
+
+		annotation SummarizationSetBy = Automatic
+
+	column photo_path
+		dataType: string
+		lineageTag: 07fb7182-bdb0-4626-8676-e09e818e0689
+		summarizeBy: none
+		sourceColumn: photo_path
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'public.employees(reports_to).employee_id'
+		dataType: int64
+		formatString: 0
+		lineageTag: e9501af2-8854-488b-83ca-e35624092252
+		summarizeBy: sum
+		sourceColumn: public.employees(reports_to).employee_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'public.employees(reports_to).last_name'
+		dataType: string
+		lineageTag: 25ac6988-2999-45f3-9ebb-479727351a37
+		summarizeBy: none
+		sourceColumn: public.employees(reports_to).last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'public.employees(reports_to).first_name'
+		dataType: string
+		lineageTag: 2026a1b5-811f-411b-848c-6e03a3b5cca0
+		summarizeBy: none
+		sourceColumn: public.employees(reports_to).first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'public.employees(reports_to).title'
+		dataType: string
+		lineageTag: 9d42920c-e5b6-4e1c-bbe7-85e3a41256fd
+		summarizeBy: none
+		sourceColumn: public.employees(reports_to).title
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Employees-16111195-590f-49f5-b2a3-ebcc2bee409e = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_employees = Source{[Schema="public",Item="employees"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_employees,{"public.orders"}),
+				    #"Expanded public.employees(reports_to)" = Table.ExpandRecordColumn(#"Removed Columns", "public.employees(reports_to)", {"employee_id", "last_name", "first_name", "title"}, {"public.employees(reports_to).employee_id", "public.employees(reports_to).last_name", "public.employees(reports_to).first_name", "public.employees(reports_to).title"})
+				in
+				    #"Expanded public.employees(reports_to)"
+
+	annotation PBI_ResultType = Table
+

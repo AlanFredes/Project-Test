@@ -1,0 +1,113 @@
+table Suppliers
+	lineageTag: 249d8c22-9033-409d-bfc9-5c9025c7fa66
+
+	column supplier_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8d9d20a9-8bf3-47c3-af69-63a2650b95cb
+		summarizeBy: none
+		sourceColumn: supplier_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_name
+		dataType: string
+		lineageTag: 104cece6-b48e-4967-8cd9-9a2a62c6ce2a
+		summarizeBy: none
+		sourceColumn: company_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column contact_name
+		dataType: string
+		lineageTag: b0d90b51-f0dc-4e2c-8e18-2bdcd59ecc00
+		summarizeBy: none
+		sourceColumn: contact_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column contact_title
+		dataType: string
+		lineageTag: f905646d-3c70-44e1-9d01-205ff8904e8d
+		summarizeBy: none
+		sourceColumn: contact_title
+
+		annotation SummarizationSetBy = Automatic
+
+	column address
+		dataType: string
+		lineageTag: 13467d4a-e207-4964-8702-2e8e5c9107a2
+		summarizeBy: none
+		sourceColumn: address
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: 2700a57e-98c3-4352-82f7-81e4a1ae0e63
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 1843d6fa-fb80-4958-8659-7719c899a661
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column postal_code
+		dataType: string
+		lineageTag: b958a6e4-3601-4d43-b4c5-9f63bed3ad37
+		summarizeBy: none
+		sourceColumn: postal_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: f575e872-b166-4b87-b7e2-8fa286ccd116
+		dataCategory: County
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column phone
+		dataType: string
+		lineageTag: 357d126d-0edb-4609-b631-f9583072fa7a
+		summarizeBy: none
+		sourceColumn: phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column fax
+		dataType: string
+		lineageTag: 69276d0b-3b17-437c-8fea-f183abb8d4ff
+		summarizeBy: none
+		sourceColumn: fax
+
+		annotation SummarizationSetBy = Automatic
+
+	column homepage
+		dataType: string
+		lineageTag: 2016e438-6f81-49cc-9534-8506c62de6c8
+		summarizeBy: none
+		sourceColumn: homepage
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Suppliers-a573db4a-7a77-49df-93a6-3b9ba783b303 = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "Northwind"),
+				    public_suppliers = Source{[Schema="public",Item="suppliers"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_suppliers,{"public.products"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
